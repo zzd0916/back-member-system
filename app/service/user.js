@@ -34,9 +34,10 @@ class UserService extends Service {
   async createUser(userInfo) {
     const { ctx } = this;
     try {
-        console.log(userInfo)
-        const user = await ctx.model.User.create(userInfo);
-        console.log(user)
+        const user = await ctx.model.User.create(userInfo,(err, data) => {
+          if(err) throw err
+          console.log(data)
+        });
         return user;
     } catch (err) {
         ctx.body = JSON.stringify(err);
