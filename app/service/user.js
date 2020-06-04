@@ -1,48 +1,37 @@
-// app/service/user.js
-const Service = require('egg').Service;
+'use strict';
 
-class UserService extends Service {
+const serviceUtils = require('../utils/service');
 
+module.exports = class extends serviceUtils.generateDataService({
+  model: 'User',
+}) {
+  async getOne({ search, id }) {
+    const { ctx } = this;
+    return await ctx.helper.db.get({
+      model: ctx.model.User,
+      search,
+      id,
+      populate: [{
+        path: 'role', select: 'name level powers',
+      }],
+    });
+  }
+  
   async findUserByPhone(phone) {
     const { ctx } = this;
     try {
-        const user = await ctx.model.User.findOne({
-            phone,
+        // const user =  await ctx.model.User.findOne({
+        //   phone,
+        // });
+        console.log("user", user)
+        const user = await this.get({
+          search: {
+            phone:phone
+          }
         });
         return user;
     } catch (err) {
         ctx.body = JSON.stringify(err);
     }
   }
-
-  async findUserById(id) {
-    const { ctx } = this;
-    try {
-        const user = await ctx.model.User.findOne({
-            _id,id
-        });
-        return user;
-    } catch (err) {
-        ctx.body = JSON.stringify(err);
-    }
-  }
-
-  /**
-   * @name 创建用户
-   * @params { phone, sex, name, idCard, birthday, storeId}
-  */
-  async createUser(userInfo) {
-    const { ctx } = this;
-    try {
-        const user = await ctx.model.User.create(userInfo,(err, data) => {
-          if(err) throw err
-          console.log(data)
-        });
-        return user;
-    } catch (err) {
-        ctx.body = JSON.stringify(err);
-    }
-  }
-}
-
-module.exports = UserService;
+};

@@ -7,7 +7,8 @@
 module.exports = app => {
   const { router, controller } = app;
   router.get('/', controller.home.index);
-  router.get('/api/user/info', controller.user.getUserInfoById);
+  // router.get('/api/user/info', controller.user.getUserInfoById);
   router.post('/api/user/login', controller.user.login);
-  router.post('/api/user/register', controller.user.createUser);
+  router.get('/api/user/test', controller.user.test);
+  // router.post('/api/user/register', controller.user.createUser);
 };
