@@ -31,6 +31,10 @@ module.exports = appInfo => {
     },
   };
 
+  config.jwt = {
+    secret: "member_system"//自定义 token 的加密条件字符串
+  };
+
   // use for cookie sign key, should change to your own and keep security
   config.keys = appInfo.name + '_1591149213136_5090';
 

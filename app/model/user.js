@@ -29,5 +29,5 @@ module.exports = app => {
     updateTime: { type: Date, __tit: '更新时间' },
   });
 
-  return mongoose.model('user', userSchema,'user');
+  return mongoose.model('user', userSchema, 'user');
 };

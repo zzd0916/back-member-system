@@ -5,10 +5,11 @@
  */
 
 module.exports = app => {
+  const jwt = app.middleware.jwt(app.config.jwt);
   const { router, controller } = app;
-  router.get('/', controller.home.index);
+  router.get('/',jwt, controller.home.index);
   // router.get('/api/user/info', controller.user.getUserInfoById);
   router.post('/api/user/login', controller.user.login);
-  router.get('/api/user/test', controller.user.test);
-  // router.post('/api/user/register', controller.user.createUser);
+  router.post('/api/user/register', controller.user.register);
+  router.post('/api/base/sendCode',jwt, controller.base.sendCode);
 };

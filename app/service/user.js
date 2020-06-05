@@ -20,14 +20,23 @@ module.exports = class extends serviceUtils.generateDataService({
   async findUserByPhone(phone) {
     const { ctx } = this;
     try {
-        // const user =  await ctx.model.User.findOne({
-        //   phone,
-        // });
-        console.log("user", user)
+      console.log('phone',phone)
         const user = await this.get({
           search: {
             phone:phone
           }
+        });
+        return user;
+    } catch (err) {
+        ctx.body = JSON.stringify(err);
+    }
+  }
+
+  async createUser(form) {
+    const { ctx } = this;
+    try {
+        const user = await this.save({
+          data: form
         });
         return user;
     } catch (err) {

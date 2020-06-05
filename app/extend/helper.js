@@ -96,13 +96,12 @@ module.exports = {
   },
   utils,
   enum: require('./enum'),
-  resp({ state = 1, text, err, data, datas, count = 0, list = [], file, stream, fileName, more } = {}) {
+  resp({ success = true, text, err, data, datas, count = 0, list = [], file, stream, fileName, more ,token} = {}) {
+
     // console.log('resp:', { text, err, data, count, list, file, stream, fileName });
-
     const { ctx, app } = this;
-
     if (err) {
-      ctx.body = { state: 0, more, msg: filterError(err, app), err };
+      ctx.body = { success: false, more, errCode:'',  errMsg: filterError(err, app), err };
       return;
     }
 
@@ -119,17 +118,16 @@ module.exports = {
     }
 
     if (data) {
-      ctx.body = { state, more, data };
+      ctx.body = { success, more, data, token };
       return;
     }
 
     if (datas) {
-      ctx.body = { state, more };
+      ctx.body = { success, more };
       return;
     }
-
-    if (list) {
-      ctx.body = { state, more, count, list };
+    if (list.length) {
+      ctx.body = { success, more, count, list };
       return;
     }
 
@@ -138,7 +136,7 @@ module.exports = {
       return;
     }
 
-    ctx.body = { state, more };
+    ctx.body = { success, more };
 
   },
   auth(loginType) {
@@ -149,7 +147,6 @@ module.exports = {
     get(args) {
       // 加入权限范围控制
       // setRangeSearch(args);
-      console.log(123)
       return dbHelper.get(args);
     },
     count({ model, search }) {
@@ -171,15 +168,16 @@ module.exports = {
     save(args) {
       // 加入权限范围控制
       // 如果是修改数据，则验证权限范围
-      if (args.data._id) {
-        const _args_ = { model: args.model, search: { _id: args.data._id } };
-        if (setRangeSearch(_args_)) {
-          // 需要验证用户是否有权限删除
-          const r = dbHelper.get(_args_);
-          if (r.err) return r;
-          if (!r.data) return { err: '没有权限修改此数据' };
-        }
-      }
+      // if (args.data._id) {
+      //   const _args_ = { model: args.model, search: { _id: args.data._id } };
+      //   if (setRangeSearch(_args_)) {
+      //     // 需要验证用户是否有权限删除
+      //     const r = dbHelper.get(_args_);
+      //     if (r.err) return r;
+      //     if (!r.data) return { err: '没有权限修改此数据' };
+      //   }
+      // }
+      // console.log(data)
       return dbHelper.save(args);
     },
     update(args) {
@@ -256,4 +254,8 @@ module.exports = {
       return ctx.service[service];
     },
   },
+  getRandomNumber(num = 6) {
+    num = this.toNumber(num)
+    return Math.random().toFixed(6).slice(-num)
+  }
 };

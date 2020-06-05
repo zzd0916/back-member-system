@@ -95,27 +95,35 @@ module.exports.save = ({ model, data, dup, dupTit }) => {
   if (check) return check;
 
   if (typeof data !== 'object') return { err: 'save data is invalid.' };
+  
   if (typeof data.save === 'function') {
     return new Promise((resolve, reject) => data.save(err => {
       if (err) reject({ err: err.message });
       resolve({});
     }));
   }
+
   if (data._id) {
     const _id = data._id;
     delete data._id;
     return update({ model, data, search: { _id }, isMany: false, dup, dupTit });
   }
+
   return (dup ? model.findOne(dup, { _id: 1 }) : Promise.resolve())
     .then(doc => {
       if (doc) return { err: `${dupTit ? dupTit : '数据'}已经存在` };
+    //  console.log("create");
       return model.create(data);
     })
     .then(datas => {
+      // console.log("datas", datas)
       if (datas.err) return datas;
       return { datas };
     })
-    .catch(err => { return { err: err.message }; });
+    .catch(err => {
+      // console.log("catch",err); 
+      return { err: err.message }; 
+    });
 
 };
 
@@ -156,8 +164,7 @@ module.exports.get = ({ model, id, sort, fields, search, populate }) => {
   // console.log('get:', id, typeof id);
   if ((!id || (typeof id === 'string' && id.length !== 24)) && (!search || typeof search !== 'object')) return { err: 'id and search is null!' };
 
-  // let query = id ? model.findById(id, fields) : model.findOne(search, fields);
-  let query = model.findById("5ed75a03bd879974fd55b0e5")
+  let query = id ? model.findById(id, fields) : model.findOne(search, fields);
   
   if (sort && typeof sort === 'object') {
     query = query.sort(sort);
